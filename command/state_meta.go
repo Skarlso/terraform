@@ -1,15 +1,12 @@
 package command
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
 	backendlocal "github.com/hashicorp/terraform/backend/local"
 	"github.com/hashicorp/terraform/state"
-	"github.com/hashicorp/terraform/states"
 	"github.com/hashicorp/terraform/states/statemgr"
-	"github.com/hashicorp/terraform/terraform"
 )
 
 // StateMeta is the meta struct that should be embedded in state subcommands.
@@ -77,24 +74,6 @@ func (c *StateMeta) State() (state.State, error) {
 	}
 
 	return realState, nil
-}
-
-// filterInstance filters a single instance out of filter results.
-func (c *StateMeta) filterInstance(rs []*states.FilterResult) (*states.FilterResult, error) {
-	var result *states.FilterResult
-	for _, r := range rs {
-		if _, ok := r.Value.(*terraform.InstanceState); !ok {
-			continue
-		}
-
-		if result != nil {
-			return nil, errors.New(errStateMultiple)
-		}
-
-		result = r
-	}
-
-	return result, nil
 }
 
 const errStateMultiple = `Multiple instances found for the given pattern!
